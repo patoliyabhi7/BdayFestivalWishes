@@ -1,4 +1,5 @@
 const express = require('express')
+const cronJob = require('./cronJobs/birthdayWishes.js');
 
 const app = express();
 app.use(express.json());
