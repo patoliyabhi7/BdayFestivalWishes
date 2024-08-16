@@ -2,22 +2,32 @@ const cron = require('node-cron');
 const sendEmail = require('./../utils/email');
 const xlsx = require('xlsx')
 
-cron.schedule('30 16 10 * * *', async () => {
+cron.schedule('47 11 * * *', async () => {
     try {
         const now = new Date().toJSON().slice(5, 10);
+        const today = new Date().toJSON().slice(0, 10);
 
         // Reading our excel file 
-        const file = xlsx.readFile('./employee_details.xlsx')
+        const employees = xlsx.readFile('./employee_details.xlsx')
+        const festivals = xlsx.readFile('./festivals.xlsx')
 
         let data = []
+        let data2 = []
 
-        const sheets = file.SheetNames;
+        const employee_sheets = employees.SheetNames;
+        const festival_sheets = festivals.SheetNames;
 
-        for (let i = 0; i < sheets.length; i++) {
-            const temp = xlsx.utils.sheet_to_json(
-                file.Sheets[file.SheetNames[i]])
+        for (let i = 0; i < employee_sheets.length; i++) {
+            const temp = xlsx.utils.sheet_to_json(employees.Sheets[employees.SheetNames[i]])
             temp.forEach((res) => {
                 data.push(res)
+            })
+        }
+
+        for (let i = 0; i < festival_sheets.length; i++) {
+            const temp = xlsx.utils.sheet_to_json(festivals.Sheets[festivals.SheetNames[i]])
+            temp.forEach((res) => {
+                data2.push(res)
             })
         }
 
@@ -71,7 +81,40 @@ Thank you for your continued commitment, and here’s to celebrating more milest
             // console.log(`Work anniversary wish sent to ${user.name}`);
         }
 
+        // Festival wishes
+        const date_format_festivals = data2.map(festival => { return { festival, date: excelDateToJSDate(festival.date) } })
+        const today_festivals = date_format_festivals.filter(festival => festival.date === today);
+
+        for (const festival of today_festivals) {
+            // console.log(festival.festival.festival_name)
+            for (const user of data) {
+                const userFname = user.name.split(' ')[0];
+                await sendEmail({
+                    email: user.email,
+                    subject: `Happy ${festival.festival.festival_name}, ${userFname}!`,
+                    message: `Dear ${user.name},
+
+As ${festival.festival.festival_name} approaches, I wanted to extend my heartfelt wishes to you and your loved ones. May this festive season bring you joy, peace, and prosperity.
+
+Let’s take this opportunity to celebrate, reflect, and recharge. I hope you enjoy the festivities and create beautiful memories with those who matter most.
+
+Wishing you a wonderful ${festival.festival.festival_name}!`
+                });
+                // console.log(`Festival wish sent to ${user.name}`);
+            }
+        }
     } catch (error) {
         console.log(error)
     }
 })
+
+function excelDateToJSDate(serial) {
+    // Excel's date system is based on the 1900 date system in Windows
+    // Excel's date 1 corresponds to 1900-01-01 (for Windows)
+    var excelEpoch = new Date(1900, 0, 1);
+    // Adjust for the Excel leap year bug, Excel considers 1900 as a leap year (it is not)
+    var dateOffset = serial > 59 ? serial - 1 : serial;
+    var days = dateOffset; // Adjust for the offset between JavaScript and Excel days
+    // +1 date
+    return new Date(excelEpoch.getTime() + days * 24 * 60 * 60 * 1000).toJSON().slice(0, 10);
+}
