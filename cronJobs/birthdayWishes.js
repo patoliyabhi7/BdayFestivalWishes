@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const sendEmail = require('./../utils/email');
 const xlsx = require('xlsx')
 
-cron.schedule('47 11 * * *', async () => {
+cron.schedule('0 10 * * *', async () => {
     try {
         const now = new Date().toJSON().slice(5, 10);
         const today = new Date().toJSON().slice(0, 10);
@@ -45,7 +45,6 @@ Wishing you a very happy birthday! 🎉 May your day be filled with joy, laughte
 
 Enjoy your special day!`
             });
-            // console.log(`Birthday wish sent to ${user.name}`);
         }
 
         // Work anniversary 
@@ -78,7 +77,6 @@ Your dedication, hard work, and contributions have been instrumental to our succ
 
 Thank you for your continued commitment, and here’s to celebrating more milestones in the future!`
             });
-            // console.log(`Work anniversary wish sent to ${user.name}`);
         }
 
         // Festival wishes
@@ -86,7 +84,6 @@ Thank you for your continued commitment, and here’s to celebrating more milest
         const today_festivals = date_format_festivals.filter(festival => festival.date === today);
 
         for (const festival of today_festivals) {
-            // console.log(festival.festival.festival_name)
             for (const user of data) {
                 const userFname = user.name.split(' ')[0];
                 await sendEmail({
@@ -100,7 +97,6 @@ Let’s take this opportunity to celebrate, reflect, and recharge. I hope you en
 
 Wishing you a wonderful ${festival.festival.festival_name}!`
                 });
-                // console.log(`Festival wish sent to ${user.name}`);
             }
         }
     } catch (error) {
