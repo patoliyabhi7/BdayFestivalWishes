@@ -44,7 +44,9 @@ cron.schedule('0 10 * * *', async () => {
 
 Wishing you a very happy birthday! 🎉 May your day be filled with joy, laughter, and celebration. We are grateful to have you as part of our team and hope this year brings you continued success and happiness.
 
-Enjoy your special day!`
+Enjoy your special day!`,
+                    fileName: "demo.pdf",
+                    filePath: "./Google.pdf"
                 });
             } else {
                 console.log(`No email found for user: ${user.name}`);
@@ -58,7 +60,6 @@ Enjoy your special day!`
         const workAnniversary = date_format_anniversary.filter(user => user.date.slice(5) === now);
 
         for (const entry of workAnniversary) {
-            console.log(entry)
             const { user } = entry;
             if (user.email) {
                 const userFname = user.name.split(' ')[0];
