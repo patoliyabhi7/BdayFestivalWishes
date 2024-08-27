@@ -1,8 +1,9 @@
 const cron = require('node-cron');
 const sendEmail = require('./../utils/email');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 const xlsx = require('xlsx')
 
-cron.schedule('0 10 * * *', async () => {
+cron.schedule('15 38 17 * * *', async () => {
     try {
         const now = new Date().toJSON().slice(5, 10);
         const today = new Date().toJSON().slice(0, 10);
@@ -10,6 +11,7 @@ cron.schedule('0 10 * * *', async () => {
         // Reading our excel file 
         const employees = xlsx.readFile('./employee.xlsx')
         const festivals = xlsx.readFile('./festivals.xlsx')
+        // const employeeDoc = new GoogleSpreadsheet(`${process.env.EMPLOYEE_GOOGLE_SHEET}`);
 
         let data = []
         let data2 = []
@@ -48,6 +50,7 @@ Enjoy your special day!`,
                     fileName: "demo.pdf",
                     filePath: "./Google.pdf"
                 });
+                console.log("bday wish sent", user.email)
             } else {
                 console.log(`No email found for user: ${user.name}`);
             }
@@ -76,6 +79,7 @@ Your dedication, hard work, and contributions have been instrumental to our succ
 
 Thank you for your continued commitment, and here’s to celebrating more milestones in the future!`
                 });
+                console.log("anni wish sent", user.email)
             } else {
                 console.log(`No email found for user: ${user.name}`);
             }

@@ -13,5 +13,5 @@ app.listen(port, async () => {
     console.log(`App is running on port ${port}`);
     
     const open = await import('open'); 
-    open.default(`http://127.0.0.1:${port}`); 
+    // open.default(`http://127.0.0.1:${port}`); 
 });
